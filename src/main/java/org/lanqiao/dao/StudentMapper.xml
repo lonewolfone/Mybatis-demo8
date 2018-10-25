@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--接口-->
+<mapper namespace="org.lanqiao.dao.StudentMapper">
+    <!--&lt;!&ndash;查询：多对一：根据cid查询学生信息&ndash;&gt;-->
+    <!--<select id="findStuByCid" resultType="org.lanqiao.pojo.Student">-->
+        <!--select * from stu where cid = #{cid};-->
+    <!--</select>-->
+    <!--多表查询：一对多：根据sid查询学生信息包括学生的班级信息-->
+    <resultMap id="stuAndCls" type="org.lanqiao.pojo.Student">
+        <id column="id" property="id"></id>
+        <result column="sname" property="sname"></result>
+        <result column="sage" property="sage"></result>
+        <result column="ssex" property="ssex"></result>
+        <!--设置关联的集合属性,即:Clas类,属性的映射-->
+        <association property="clas" javaType="Clas">
+            <id column="cid" property="cid"></id>
+            <result column="cname" property="cname"></result>
+        </association>
+    </resultMap>
+    <select id="findStuBySid" resultMap="stuAndCls">
+        select s.id,s.sname,s.sage,s.ssex,c.cid,c.cname from stu s,class c where s.cid = c.cid and s.id = #{id};
+    </select>
+
+
+    <!--单表查询-->
+    <resultMap id="stuToCls" type="Student">
+        <id column="id" property="id"></id>
+        <result column="sname" property="sname"></result>
+        <result column="sage" property="sage"></result>
+        <result column="ssex" property="ssex"></result>
+        <!--设置关联的集合属性,即:Clas类,属性的映射-->
+        <association property="clas" javaType="Clas" select="org.lanqiao.dao.ClasMapper.findCidByCid" column="cid">
+            <id column="cid" property="cid"></id>
+            <result column="cname" property="cname"></result>
+        </association>
+    </resultMap>
+    <select id="findStuBySids" resultMap="stuToCls">
+        select id,sname,sage,ssex from stu where id = #{id};
+    </select>
+</mapper>

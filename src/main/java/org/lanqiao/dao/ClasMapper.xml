@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--接口-->
+<mapper namespace="org.lanqiao.dao.ClasMapper">
+    <!--<resultMap id="clasAndstu" type="Clas">&lt;!&ndash;即:clas类中,属性的映射&ndash;&gt;
+        <id column="cid" property="cid"></id>
+        <result column="cname" property="cname"></result>&lt;!&ndash;在其中包含一个集合&ndash;&gt;
+        &lt;!&ndash;设置关联的集合属性,即:Student类,属性的映射&ndash;&gt;
+        <collection property="studentSet" ofType="Student">&lt;!&ndash;属性,对应的类型&ndash;&gt;
+                <id column="id" property="id"></id>
+                <result column="sname" property="sname"></result>
+                <result column="ssex" property="ssex"></result>
+        </collection>
+    </resultMap>
+    多表查询：关联查询
+    <select id="findCidByCid" resultMap="clasAndstu">/*结果如何去映射，映射一个实体*/
+        select c.cid,c.cname,s.id,s.sname,s.ssex  from class c,stu s  where c.cid = s.cid and c.cid = #{cid};
+    </select>-->
+
+
+    <resultMap id="clsAndStu" type="Clas">
+        <id column="cid" property="cid"></id>
+        <result column="cname" property="cname"></result>
+        <collection property="studentSet" ofType="Student" select="org.lanqiao.dao.StudentMapper.findStuByCid" column="cid">
+            <id column="id" property="id"></id>
+            <result column="sname" property="sname"></result>
+            <result column="ssex" property="ssex"></result>
+        </collection>
+    </resultMap>
+    <!--多表查询：单表查询-->
+    <select id="findCidByCid" resultMap="clsAndStu">
+        select * from class where cid = #{cid};
+    </select>
+</mapper>
